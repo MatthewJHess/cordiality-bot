@@ -1,4 +1,4 @@
-﻿# bot.py
+﻿# CordialityBot.py
 import os
 import random
 from token import EQUAL
@@ -40,7 +40,7 @@ async def members(ctx):
 
 @bot.command()
 async def commands(ctx):
-    """Repeats a message multiple times."""
+    """Lists the current commands."""
     await ctx.send(f'Current commands: !members, !cordiality <username>, !take <username>, and !reward <username>')
 
 
