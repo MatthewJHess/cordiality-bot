@@ -6,7 +6,7 @@ from token import EQUAL
 from discord.ext import commands
 import discord
 
-
+TOKEN = 'REDACTED'
 intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
@@ -47,14 +47,6 @@ async def commands(ctx):
     """Lists current commands."""
     await ctx.send(f'Current commands: !members, !cordiality <nickname>, !take <nickname>, and !reward <nickname>')
 
-
-@bot.command()
-async def test(ctx):
-    """Says when a member joined."""
-    discord.ext.commands.Bot.get_all_members('MTE0MzY1MDM3MjMzOTEwNTg4Mg.GWz1Hj.cJp2PEf6irc6lbvyfHQzJeEaHTCwPd5l27XCVQ')
-    #await ctx.send(f'')
-
-
 @bot.command()
 async def cordiality(ctx, nick):
     """Cordiality Point Checker"""
@@ -90,5 +82,5 @@ async def take(ctx, nick):
     
 
 
-bot.run('REDACTED')
+bot.run(TOKEN)
 
