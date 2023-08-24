@@ -36,10 +36,8 @@ async def on_ready():
 async def members(ctx):
     """Server Members."""
     x = ctx.guild.members
-    #y = len(bot.Users)
-    #await ctx.send(y)
     for member in x:
-        await ctx.send(f'{member.name} is called {member.nick}')
+        await ctx.send(f'{member.name} is also called {member.nick}')
 
 
 @bot.command()
@@ -63,10 +61,10 @@ async def reward(ctx, nick):
     x = ctx.guild.members
     for member in x:
         if nick == member.nick or nick == member.name:
-            await ctx.send(f'Rewarding {member.nick} with one cordiality point')
             people[format(member.name)].score = people[format(member.name)].score + 1
+            await ctx.send(f'Rewarding {member.nick} with one cordiality point. {member.nick} now has {people[format(member.name)].score} cordiality points')
             return
-    await ctx.send(f'{nick} is not a member. Please use server nickname.')
+    await ctx.send(f'{nick} is not a member. Please use server nickname')
     
 @bot.command()
 async def take(ctx, nick):
@@ -74,13 +72,12 @@ async def take(ctx, nick):
     x = ctx.guild.members
     for member in x:
         if nick == member.nick or nick == member.name:
-            await ctx.send(f'Taking one cordiality point from {member.nick}')
             people[format(member.name)].score = people[format(member.name)].score - 1
+            await ctx.send(f'Taking one cordiality point from {member.nick}. {member.nick} now has {people[format(member.name)].score} cordiality points')
             return
-    await ctx.send(f'{nick} is not a member. Please use server nickname.')
+    await ctx.send(f'{nick} is not a member. Please use server nickname')
     
     
 
 
 bot.run(TOKEN)
-
