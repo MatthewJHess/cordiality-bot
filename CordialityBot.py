@@ -63,18 +63,28 @@ people = {}
 async def on_ready():
     print(f'Logged in as {bot.user} (ID: {bot.user.id})')
     print('------')
-    with open("data.csv","w+") as csvfile:
-        csvwriter = csv.writer(csvfile)
+    with open("data.csv","r+", newline='') as csvfile:
+        csvwriter = csv.writer(csvfile, delimiter=',')
         csvreader = csv.reader(csvfile, delimiter=',')
+        csvreader = list(csvreader)
         r = 0;
-        for member in bot.get_all_members():
+        for row in csvreader:
+            name = csvreader[r][0]
+            score = int(csvreader[r][1])
+            people[name] = people.get(name, Person(name = name, score = score))
+            people[name].score = score
+            #Person(csvreader[r][0],csvreader[r][1])
+            print(f'{people[name].name} has {people[name].score} points')
+            r = r+1
+        '''for member in bot.get_all_members():
             name = format(member.name)
-            people[name] = people.get(name, Person(name = name, score = rows[format(r),1])))
+            #print(format(r))
+            people[name] = people.get(name, Person(name = name, score = 0))
+
             rows.append([people[format(name)].name,people[format(member.name)].score])
             r=r + 1
-            #print(people[format(member.name)].name)
-            print(format(r))
-        csvwriter.writerows(rows)
+            print(people[format(member.name)].name)
+        csvwriter.writerows(rows)'''
 
 @bot.command()
 async def members(ctx):
