@@ -11,7 +11,7 @@ intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
 rows = []
-new = '\n'
+update = []
 
 description = '''description'''
 #data = open("data.csv","w+") as csvfile:
@@ -33,13 +33,13 @@ async def on_ready():
         csvreader = list(csvreader)
         r = 0;
         for row in csvreader:
+            if csvreader[r][0] == []: break
             name = csvreader[r][0]
             score = int(csvreader[r][1])
             people[name] = people.get(name, Person(name = name, score = score))
             people[name].score = score
-            #Person(csvreader[r][0],csvreader[r][1])
             print(f'{people[name].name} has {people[name].score} points')
-            
+            update.append([people[name].name,people[name].score])
             r = r+1
         old = 0
         for member in bot.get_all_members():
@@ -51,9 +51,11 @@ async def on_ready():
                     old = 1
                 p = p+1
             people[name] = people.get(name, Person(name = name, score = 0))
-            if old == 0: rows.append([people[format(name)].name,people[format(member.name)].score])
+            if old == 0:
+                rows.append([people[format(name)].name,people[format(member.name)].score])
+                update.append([people[format(name)].name,people[format(member.name)].score])
             old = 0
-        #if rows != []: rows = ['\n'] + rows
+        #rows.pop()
         csvwriter.writerows([''] + rows)
 
 @bot.command()
@@ -86,34 +88,55 @@ async def cordiality(ctx, nick):
 async def reward(ctx, nick):
     '''Rewards a cordiality point'''
     x = ctx.guild.members
+    error = 1
     for member in x:
         if nick == member.nick:
+            print(member.nick)
             people[format(member.name)].score = people[format(member.name)].score + 1
             await ctx.send(f'Rewarding {member.nick} with 1 cordiality point. {member.nick} now has {people[format(member.name)].score} cordiality points')
-            return
+            error = 0
         elif nick == member.name:
             people[format(member.name)].score = people[format(member.name)].score + 1
             await ctx.send(f'Rewarding {member.name} with 1 cordiality point. {member.name} now has {people[format(member.name)].score} cordiality points')
+            error = 0
+        i=0
+        for row in update:
+            if update[i][0] == member.name: update[i][1] = people[format(member.name)].score
+            i=i+1
+    if error == 1: 
+            await ctx.send(f'{nick} is not a member. Please use server nickname')
             return
-    await ctx.send(f'{nick} is not a member. Please use server nickname')
+    with open("data.csv","w", newline='') as csvfile:
+        csvwriter = csv.writer(csvfile, delimiter=',')
+        csvwriter.writerows(update)
+        
+    
     
 @bot.command()
 async def take(ctx, nick):
     '''Takes away a cordiality point'''
     x = ctx.guild.members
+    error = 1
     for member in x:
         if nick == member.nick:
+            print(member.nick)
             people[format(member.name)].score = people[format(member.name)].score - 1
             await ctx.send(f'Taking 1 cordiality point from {member.nick}. {member.nick} now has {people[format(member.name)].score} cordiality points')
-            return
+            error = 0
         elif nick == member.name:
             people[format(member.name)].score = people[format(member.name)].score - 1
             await ctx.send(f'Taking 1 cordiality point from {member.name}. {member.name} now has {people[format(member.name)].score} cordiality points')
+            error = 0
+        i=0
+        for row in update:
+            if update[i][0] == member.name: update[i][1] = people[format(member.name)].score
+            i=i+1
+    if error == 1: 
+            await ctx.send(f'{nick} is not a member. Please use server nickname')
             return
-    await ctx.send(f'{nick} is not a member. Please use server nickname')
-    
-    
-
+    with open("data.csv","w", newline='') as csvfile:
+        csvwriter = csv.writer(csvfile, delimiter=',')
+        csvwriter.writerows(update)
 
 bot.run(TOKEN)
 
