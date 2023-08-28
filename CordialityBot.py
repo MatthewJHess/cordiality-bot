@@ -10,6 +10,8 @@ TOKEN = 'REDACTED'
 intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
+rows = []
+new = '\n'
 
 description = '''description'''
 #data = open("data.csv","w+") as csvfile:
@@ -18,44 +20,6 @@ class Person:
     def __init__(self, name, score):
         self.name = name
         self.score = 0
-        
-'''class PersistentViewBot(commands.Bot):
-    def __init__(self):
-        intents = discord.Intents.default()
-        super().__init__(command_prefix=commands.when_mentioned_or('$'), intents=intents)
-
-    async def setup_hook(self) -> None:
-        # Register the persistent view for listening here.
-        # Note that this does not send the view to any message.
-        # In order to do this you need to first send a message with the View, which is shown below.
-        # If you have the message_id you can also pass it as a keyword argument, but for this example
-        # we don't have one.
-        self.add_view(Person())'''
- 
- 
-# reading csv file
-#with open("data.csv","w+") as csvfile:
-
-fields = ['Name', 'Score']
- 
-# data rows of csv file
-rows = []
- 
-
- 
-# writing to csv file
-'''with open("data.csv","w+") as csvfile:
-    # creating a csv writer object
-    csvwriter = csv.writer(csvfile)
-     
-    # writing the fields
-    csvwriter.writerow(fields)
-     
-    # writing the data rows
-    csvwriter.writerows(rows)'''
-
-
-
 
 bot = commands.Bot(command_prefix='!', description=description, intents=intents)
 people = {}
@@ -75,16 +39,22 @@ async def on_ready():
             people[name].score = score
             #Person(csvreader[r][0],csvreader[r][1])
             print(f'{people[name].name} has {people[name].score} points')
+            
             r = r+1
-        '''for member in bot.get_all_members():
+        old = 0
+        for member in bot.get_all_members():
             name = format(member.name)
-            #print(format(r))
+            p=0
+            for person in people:
+                #print(f'{name} equals {people[person].name}?')
+                if name == people[person].name:
+                    old = 1
+                p = p+1
             people[name] = people.get(name, Person(name = name, score = 0))
-
-            rows.append([people[format(name)].name,people[format(member.name)].score])
-            r=r + 1
-            print(people[format(member.name)].name)
-        csvwriter.writerows(rows)'''
+            if old == 0: rows.append([people[format(name)].name,people[format(member.name)].score])
+            old = 0
+        #if rows != []: rows = ['\n'] + rows
+        csvwriter.writerows([''] + rows)
 
 @bot.command()
 async def members(ctx):
