@@ -32,6 +32,7 @@ async def on_ready():
         csvreader = csv.reader(csvfile, delimiter=',')
         csvreader = list(csvreader)
         r = 0;
+        n = 0; #keep track of any new entries added
         for row in csvreader:
             if csvreader[r][0] == []: break
             name = csvreader[r][0]
@@ -54,10 +55,10 @@ async def on_ready():
             if old == 0:
                 rows.append([people[format(name)].name,people[format(member.name)].score])
                 update.append([people[format(name)].name,people[format(member.name)].score])
+                n = 1;
             old = 0
-        #rows.pop()
-        csvwriter.writerows([''] + rows)
-
+        if n == 1: csvwriter.writerows([''] + rows)
+        
 @bot.command()
 async def members(ctx):
     '''Server Members.'''
@@ -139,4 +140,3 @@ async def take(ctx, nick):
         csvwriter.writerows(update)
 
 bot.run(TOKEN)
-
