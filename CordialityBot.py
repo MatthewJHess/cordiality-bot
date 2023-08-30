@@ -10,11 +10,10 @@ TOKEN = 'REDACTED'
 intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
-rows = []
-update = []
+rows = [] #for initialization
+update = [] #for updating
 
 description = '''description'''
-#data = open("data.csv","w+") as csvfile:
 
 class Person:
     def __init__(self, name, score):
@@ -47,7 +46,6 @@ async def on_ready():
             name = format(member.name)
             p=0
             for person in people:
-                #print(f'{name} equals {people[person].name}?')
                 if name == people[person].name:
                     old = 1
                 p = p+1
@@ -58,7 +56,30 @@ async def on_ready():
                 n = 1;
             old = 0
         if n == 1: csvwriter.writerows([''] + rows)
-        
+
+@bot.command()
+async def joined(ctx, member: discord.Member):
+    '''Says when a member joined.'''
+    await ctx.send(f'{member.name} joined {discord.utils.format_dt(member.joined_at)}')
+    name = member.name
+    score = 0
+    people[name] = people.get(name, Person(name = name, score = score))
+    people[name].score = score
+    await ctx.send(f'{member.name} added to the cordiality list')
+    
+@bot.command()
+async def on_member_remove(member: discord.Member):
+    '''Says when a member joined.'''
+    await ctx.send(f'{member.name} joined {discord.utils.format_dt(member.joined_at)}')
+    name = member.name
+    pos = 0
+    for person in people:
+          if name == people[person].name: break
+          pos+=1
+    people.pop(pos)
+    await ctx.send(f'{member.name} has been removed from the cordiality list')
+
+       
 @bot.command()
 async def members(ctx):
     '''Server Members.'''
@@ -140,3 +161,4 @@ async def take(ctx, nick):
         csvwriter.writerows(update)
 
 bot.run(TOKEN)
+
